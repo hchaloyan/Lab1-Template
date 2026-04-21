@@ -10,7 +10,7 @@ from part1Agents import (
     WizardDFS,
     WizardBFS,
     WizardAstar,
-    CrystalSearchWizard, SuboptimalCrystalSearchWizard,
+    CrystalSearchWizard, #SuboptimalCrystalSearchWizard,
 )
 from part2Agents import (
     WizardMiniMax,
@@ -69,10 +69,10 @@ args = parser.parse_args()
 available_agents = {
     "dfs": WizardDFS,
     "bfs": WizardBFS,
-    "ucs": WizardUCS,
+    #"ucs": WizardUCS,
     "astar": WizardAstar,
     "crystal": CrystalSearchWizard,
-    "suboptimal": SuboptimalCrystalSearchWizard,
+    #"suboptimal": SuboptimalCrystalSearchWizard,
     "greedy": WizardGreedy,
     "minimax": WizardMiniMax,
     "expectimax": WizardExpectimax,

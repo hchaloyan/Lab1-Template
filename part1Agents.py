@@ -61,14 +61,44 @@ class WizardDFS(WizardSearchAgent):
         return state.wizard_loc == state.portal_loc
 
     def next_search_expansion(self) -> GameState | None:
-        # TODO: YOUR CODE HERE
-        raise NotImplementedError
+        
+        # Return if search stack is empty
+        if not self.search_stack:
+            return None
+        
+        # Pop from stack
+        current_node = self.search_stack.pop()
+
+        
+        # Check if current_node is the goal node
+        if self.is_goal(current_node):
+            self.plan = list(reversed(self.paths[current_node]))
+            return
+        
+        return self.search_to_game(current_node)
+
+
+        
+
 
     def process_search_expansion(
         self, source: GameState, target: GameState, action: WizardMoves
     ) -> None:
-        # TODO: YOUR CODE HERE
-        raise NotImplementedError
+        
+        # Create variables
+        source_var = self.game_to_search(source)
+        target_var = self.game_to_search(target)
+
+        # If alr visited, skip
+        if target_var in self.paths:
+            return
+        
+        # Add to path
+        self.paths[target_var] = self.paths[source_var] + [action]
+        
+        # Add to stack
+        self.search_stack.append(target_var)
+
 
 
 class WizardBFS(WizardSearchAgent):
@@ -117,15 +147,43 @@ class WizardBFS(WizardSearchAgent):
         return state.wizard_loc == state.portal_loc
 
     def next_search_expansion(self) -> GameState | None:
-        # TODO: YOUR CODE HERE
-        raise NotImplementedError
+        
+        # COPY PASTED ORIGINAL CODE FROM DFS IMPLEMENTATION AND MADE ALTERATIONS
+        
+        # Return if search stack is empty
+        if not self.search_stack:
+            return None
+        
+        # Remove from queue
+        current_node = self.search_stack.pop(0)
+
+        
+        # Check if current_node is the goal node
+        if self.is_goal(current_node):
+            self.plan = list(reversed(self.paths[current_node]))
+            return
+        
+        return self.search_to_game(current_node)
 
     def process_search_expansion(
         self, source: GameState, target: GameState, action: WizardMoves
     ) -> None:
-        # TODO: YOUR CODE HERE
-        raise NotImplementedError
+        
+        # COPY PASTED ORIGINAL CODE FROM DFS IMPLEMENTATION
 
+        # Create variables
+        source_var = self.game_to_search(source)
+        target_var = self.game_to_search(target)
+
+        # If alr visited, skip
+        if target_var in self.paths:
+            return
+        
+        # Add to path
+        self.paths[target_var] = self.paths[source_var] + [action]
+        
+        # Add to queue
+        self.search_stack.append(target_var)
 
 class WizardAstar(WizardSearchAgent):
     @dataclass(eq=True, frozen=True, order=True)
@@ -176,18 +234,58 @@ class WizardAstar(WizardSearchAgent):
         return 1
 
     def heuristic(self, target: GameState) -> float:
-        # TODO: YOUR CODE HERE
-        raise NotImplementedError
+
+        # Using manhattan formula -> d = | x2 - x1 | + | y2 - y1 |
+
+        # Location formulas used for heuristic computation
+        current_location = target.active_entity_location
+        goal_location = target.get_all_tile_locations(Portal)[0]
+
+        return abs(current_location.row - goal_location.row) + abs(current_location.col - goal_location.col)
+
+
+
 
     def next_search_expansion(self) -> GameState | None:
-        # TODO: YOUR CODE HERE
-        raise NotImplementedError
+     
+        # Return if priority queue is empty
+        if not self.search_pq:
+            return None
+        
+        # Remove from queue
+        current_node = heapq.heappop(self.search_pq)[1]
+
+        
+        # Check if current_node is the goal node
+        if self.is_goal(current_node):
+            self.plan = list(reversed(self.paths[current_node][1]))
+            return
+        
+        return self.search_to_game(current_node)
 
     def process_search_expansion(
         self, source: GameState, target: GameState, action: WizardMoves
     ) -> None:
-        # TODO: YOUR CODE HERE
-        raise NotImplementedError
+
+        # Create variables
+        source_var = self.game_to_search(source)
+        target_var = self.game_to_search(target)
+
+        g_val_source = self.paths[source_var][0]
+        step_cost = self.cost(source, target, action)
+
+        # Calculate f cost -> (g + h)
+        f_cost = (g_val_source + step_cost) + self.heuristic(target)
+
+        # If alr visited or more expensive than alr found path, skip
+        if target_var in self.paths and self.paths[target_var][0] <= (g_val_source + step_cost):
+            return
+        
+        # Add to path
+        self.paths[target_var] = ((g_val_source + step_cost), self.paths[source_var][1] + [action])
+
+        # Add to priority queue
+        heapq.heappush(self.search_pq, (f_cost, target_var))
 
 
 class CrystalSearchWizard(WizardSearchAgent):
@@ -208,8 +306,9 @@ class CrystalSearchWizard(WizardSearchAgent):
 
 
 
-class SuboptimalCrystalSearchWizard(CrystalSearchWizard):
+###class SuboptimalCrystalSearchWizard(CrystalSearchWizard):
 
-    def heuristic(self, target: SearchState) -> float:
+    #def heuristic(self, target: SearchState) -> float:
         # TODO YOUR CODE HERE
-        raise NotImplementedError
+    #    raise NotImplementedError
+###
