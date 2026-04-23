@@ -496,42 +496,7 @@ class SuboptimalCrystalSearchWizard(CrystalSearchWizard):
     def heuristic(self, target: GameState) -> float:
 
         # Make inadmissible by multiplying by a factor of 2
-        
+        # Now overestimates
         cost_factor = 2
 
-
-        # Build MST using Prim's algorithm, then return to regular heuristic once no crystals remain
-
-        current_location = target.active_entity_location
-        goal_location = target.get_all_tile_locations(Portal)[0]
-        crystals_remaining = tuple(sorted(target.get_all_entity_locations(Crystal)))
-
-
-        if crystals_remaining:
-
-            # Call from cache if able to avoid recomputation
-            key = crystals_remaining
-
-            # Add to cache if not already in it
-            if key not in self.mst_dict:
-                
-                nodes = list(crystals_remaining) + [goal_location]
-                self.mst_dict[key] = self.prim_mst(nodes)
-                
-            # Distance from wizard to nearest crystal
-
-            closest_crystal = float('inf')
-            for crystal in crystals_remaining:
-                distance = abs(current_location.row - crystal.row) + abs(current_location.col - crystal.col)
-
-                # Update minimum
-                if distance < closest_crystal:
-                    closest_crystal = distance
-            
-            # ------------------------------------------------------
-
-            return cost_factor * (self.mst_dict[key] + closest_crystal)
-        
-        # Return to regular logic once all crystals are collected ------------------------
-
-        return cost_factor * (abs(current_location.row - goal_location.row) + abs(current_location.col - goal_location.col))
+        return cost_factor * super().heuristic(target)
