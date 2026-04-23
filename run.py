@@ -10,7 +10,7 @@ from part1Agents import (
     WizardDFS,
     WizardBFS,
     WizardAstar,
-    CrystalSearchWizard, #SuboptimalCrystalSearchWizard,
+    CrystalSearchWizard, SuboptimalCrystalSearchWizard,
 )
 from part2Agents import (
     WizardMiniMax,
@@ -72,7 +72,7 @@ available_agents = {
     #"ucs": WizardUCS,
     "astar": WizardAstar,
     "crystal": CrystalSearchWizard,
-    #"suboptimal": SuboptimalCrystalSearchWizard,
+    "suboptimal": SuboptimalCrystalSearchWizard,
     "greedy": WizardGreedy,
     "minimax": WizardMiniMax,
     "expectimax": WizardExpectimax,
